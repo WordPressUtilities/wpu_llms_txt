@@ -1,2 +1,3 @@
-# wpu_llms_txt
+# WPU LLMS.txt
+
 Generate a LLMS.txt file

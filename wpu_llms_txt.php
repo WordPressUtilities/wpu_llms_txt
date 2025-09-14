@@ -1,11 +1,11 @@
 <?php
 defined('ABSPATH') || die;
 /*
-Plugin Name: WPU LLMS txt
+Plugin Name: WPU LLMS.txt
 Plugin URI: https://github.com/WordPressUtilities/wpu_llms_txt
 Update URI: https://github.com/WordPressUtilities/wpu_llms_txt
 Description: Generate a llms.txt file for your site
-Version: 0.0.1
+Version: 0.0.2
 Author: Darklg
 Author URI: https://darklg.me/
 Requires at least: 6.2
@@ -50,13 +50,24 @@ class wpu_llms_txt {
         }
         $content .= "\n";
 
-        /* Links */
-        $links = $this->get_menu_links('main');
-        if ($links) {
-            $content .= "Main links:\n";
-            foreach ($links as $link) {
-                $content .= "- {$link['title']}: {$link['url']}\n";
+        $sections = array();
+
+        $sections['main'] = array(
+            'title' => 'Main links',
+            'links' => $this->get_menu_links('main')
+        );
+
+        $sections = apply_filters('wpu_llms_txt_sections', $sections);
+
+        foreach ($sections as $section) {
+            if (!isset($section['title']) || !isset($section['links']) || !$section['links']) {
+                continue;
             }
+            $content .= "## {$section['title']}\n\n";
+            foreach ($section['links'] as $link) {
+                $content .= "- [{$link['title']}]({$link['url']})\n";
+            }
+            $content .= "\n";
         }
 
         return $content;
@@ -86,7 +97,6 @@ class wpu_llms_txt {
                 'title' => $title,
                 'url' => $url
             );
-
         }
 
         return $links;
